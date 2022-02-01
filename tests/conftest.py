@@ -1,8 +1,9 @@
 from typing import Generator
 
 import pytest
-from app.main import app
 from fastapi.testclient import TestClient
+
+from pantapalabras.api import app
 
 
 @pytest.fixture(scope="module")

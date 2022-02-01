@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     PORT = 9173
     SECRET_KEY: str = os.getenv("SECRET_KEY")
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    SPREADSHEET: str = "Pantapalabras"
 
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", ENV_LOCAL)
     if ENVIRONMENT == ENV_LOCAL:

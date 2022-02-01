@@ -1,13 +1,15 @@
-from typing import Dict
+from typing import Dict, List
 
+import gspread
 import sentry_sdk
 from fastapi import FastAPI
 from fastapi.logger import logger
 from fastapi.requests import Request
+from oauth2client.service_account import ServiceAccountCredentials
 from starlette.middleware.cors import CORSMiddleware
 
 from pantapalabras.config import settings
-from pantapalabras.constants import ENV_DEV, ENV_PROD
+from pantapalabras.constants import ENV_DEV, ENV_PROD, PROJECT_DIR
 
 if settings.ENVIRONMENT in [ENV_DEV, ENV_PROD]:
     sentry_sdk.init(settings.SENTRY_DSN, environment=settings.ENVIRONMENT)
@@ -18,6 +20,12 @@ app = FastAPI(
     docs_url=f"/{settings.PROJECT_NAME}/docs",
     openapi_url=f"/{settings.PROJECT_NAME}/openapi.json",
 )
+
+scopes = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+service_account_credentials = ServiceAccountCredentials.from_json_keyfile_name(
+    f"{PROJECT_DIR}/client_secret.json", scopes
+)
+SPREADSHEET_CLIENT = gspread.authorize(service_account_credentials)
 
 
 @app.middleware("http")
@@ -45,5 +53,11 @@ if settings.BACKEND_CORS_ORIGINS:
 
 
 @app.get("/", response_model=Dict)
-def healthcheck() -> Dict:
+def health_check() -> Dict:
     return {"success": True, "status": "healthy", "environment": settings.ENVIRONMENT}
+
+
+@app.get("/spreadsheet")
+def get_spreadsheet() -> List[dict]:
+    sheet = SPREADSHEET_CLIENT.open(settings.SPREADSHEET).sheet1
+    return sheet.get_all_records()
