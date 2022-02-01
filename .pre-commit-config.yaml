@@ -34,3 +34,7 @@ repos:
           - flake8-polyfill
           - flake8-simplify
         exclude: migrations/
+        args: # arguments to configure flake8
+          # making isort line length compatible with black
+          - "--max-line-length=119"
+          - "--ignore=D100,D101,S104,D106,D103,D104,E402"
