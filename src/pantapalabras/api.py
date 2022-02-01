@@ -1,15 +1,14 @@
 from typing import Dict, List
 
-import gspread
 import sentry_sdk
 from fastapi import FastAPI
 from fastapi.logger import logger
 from fastapi.requests import Request
-from oauth2client.service_account import ServiceAccountCredentials
 from starlette.middleware.cors import CORSMiddleware
 
 from pantapalabras.config import settings
-from pantapalabras.constants import ENV_DEV, ENV_PROD, PROJECT_DIR
+from pantapalabras.constants import ENV_DEV, ENV_PROD
+from pantapalabras.spreadsheet import SPREADSHEET_CLIENT
 
 if settings.ENVIRONMENT in [ENV_DEV, ENV_PROD]:
     sentry_sdk.init(settings.SENTRY_DSN, environment=settings.ENVIRONMENT)
@@ -20,12 +19,6 @@ app = FastAPI(
     docs_url=f"/{settings.PROJECT_NAME}/docs",
     openapi_url=f"/{settings.PROJECT_NAME}/openapi.json",
 )
-
-scopes = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-service_account_credentials = ServiceAccountCredentials.from_json_keyfile_name(
-    f"{PROJECT_DIR}/client_secret.json", scopes
-)
-SPREADSHEET_CLIENT = gspread.authorize(service_account_credentials)
 
 
 @app.middleware("http")
