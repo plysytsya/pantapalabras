@@ -154,3 +154,7 @@ cython_debug/
 
 # secrets
 client_secret.json
+
+
+# mac filesystem
+.DS_Store
