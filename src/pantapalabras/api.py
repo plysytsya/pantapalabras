@@ -31,11 +31,11 @@ def get_spreadsheet() -> List[dict]:
 
 @app.get("/image", response_class=StreamingResponse)
 def get_image():
-    img = Image.new("RGB", (320, 250), color=(255, 255, 255))
+    img = Image.new("RGB", (960, 540), color=(255, 255, 255))
 
     d = ImageDraw.Draw(img)
     font_path = str(Path(PROJECT_PARENT_DIR / "fonts/times.ttf"))
-    font = ImageFont.truetype(font_path, 50)
+    font = ImageFont.truetype(font_path, 150)
     d.text((10, 10), "Hello World", font=font, fill=(0, 0, 0))
     img = img.transpose(Image.ROTATE_90)
 
