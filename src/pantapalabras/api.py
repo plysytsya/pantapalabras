@@ -1,5 +1,6 @@
 from typing import Dict, List
 
+import uvicorn
 from fastapi import FastAPI
 
 from pantapalabras.config import settings
@@ -21,3 +22,7 @@ def health_check() -> Dict:
 def get_spreadsheet() -> List[dict]:
     sheet = SPREADSHEET_CLIENT.open(settings.SPREADSHEET).sheet1
     return sheet.get_all_records()
+
+
+if __name__ == "__main__":
+    uvicorn.run("api:app", host="0.0.0.0", port=9173, reload=True)
