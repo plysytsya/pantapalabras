@@ -37,6 +37,7 @@ def get_image():
     font_path = str(Path(PROJECT_PARENT_DIR / "fonts/times.ttf"))
     font = ImageFont.truetype(font_path, 150)
     d.text((10, 10), "Hello World", font=font, fill=(0, 0, 0))
+    d.text((10, 250), "Hola Mundo", font=font, fill=(0, 0, 0))
     img = img.transpose(Image.ROTATE_90)
 
     img_byte_arr = io.BytesIO()
