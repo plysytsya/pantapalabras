@@ -1,4 +1,5 @@
 import io
+from pathlib import Path
 from typing import Dict, List
 
 import uvicorn
@@ -7,6 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 from starlette.responses import StreamingResponse
 
 from pantapalabras.config import settings
+from pantapalabras.constants import PROJECT_PARENT_DIR
 from pantapalabras.spreadsheet import SPREADSHEET_CLIENT
 
 app = FastAPI(
@@ -32,7 +34,8 @@ def get_image():
     img = Image.new("RGB", (320, 250), color=(255, 255, 255))
 
     d = ImageDraw.Draw(img)
-    font = ImageFont.truetype("times.ttf", 50)
+    font_path = str(Path(PROJECT_PARENT_DIR / "fonts/times.ttf"))
+    font = ImageFont.truetype(font_path, 50)
     d.text((10, 10), "Hello World", font=font, fill=(0, 0, 0))
     img = img.transpose(Image.ROTATE_90)
 
