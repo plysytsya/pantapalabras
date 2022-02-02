@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  pantapalabras:
+    container_name: pantapalabras
+    build:
+      context: .
+    volumes:
+      - .:/app/
+    ports:
+      - "9173:9173"
