@@ -1,7 +1,10 @@
+import io
 from typing import Dict, List
 
 import uvicorn
 from fastapi import FastAPI
+from PIL import Image, ImageDraw, ImageFont
+from starlette.responses import StreamingResponse
 
 from pantapalabras.config import settings
 from pantapalabras.spreadsheet import SPREADSHEET_CLIENT
@@ -22,6 +25,22 @@ def health_check() -> Dict:
 def get_spreadsheet() -> List[dict]:
     sheet = SPREADSHEET_CLIENT.open(settings.SPREADSHEET).sheet1
     return sheet.get_all_records()
+
+
+@app.get("/image", response_class=StreamingResponse)
+def get_image():
+    img = Image.new("RGB", (320, 250), color=(255, 255, 255))
+
+    d = ImageDraw.Draw(img)
+    font = ImageFont.truetype("times.ttf", 50)
+    d.text((10, 10), "Hello World", font=font, fill=(0, 0, 0))
+    img = img.transpose(Image.ROTATE_90)
+
+    img_byte_arr = io.BytesIO()
+    img.save(img_byte_arr, format="PNG")
+
+    img_byte_arr = img_byte_arr.getvalue()
+    return StreamingResponse(io.BytesIO(img_byte_arr), media_type="image/png")
 
 
 if __name__ == "__main__":
