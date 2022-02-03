@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Tuple
 
 from pydantic import AnyHttpUrl, BaseSettings
 
@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
     SPREADSHEET: str = "Pantapalabras"
     FONT: str = "times.ttf"
+    M5PAPER_SCREEN_SIZE: Tuple[int, int] = (960, 540)
+    MAX_FONT_SIZE: int = 150
+    SCREEN_BORDER: int = 60
 
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", ENV_LOCAL)
     if ENVIRONMENT == ENV_LOCAL:

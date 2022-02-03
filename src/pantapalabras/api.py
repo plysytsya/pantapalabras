@@ -6,8 +6,9 @@ from fastapi import FastAPI
 from starlette.responses import StreamingResponse
 
 from pantapalabras.config import settings
+from pantapalabras.schemas.vocabulary import Vocabulary
 from pantapalabras.spreadsheet import SPREADSHEET_CLIENT
-from pantapalabras.text_to_image import create_image_from_texts
+from pantapalabras.text_to_image import _create_image_from_texts
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -27,10 +28,9 @@ def get_spreadsheet() -> List[dict]:
     return sheet.get_all_records()
 
 
-@app.get("/image", response_class=StreamingResponse)
-def get_image():
-
-    image_with_texts = create_image_from_texts("hello, world!", "hola, mundo!")
+@app.post("/image", response_class=StreamingResponse)
+def create_image_from_texts(vocabulary: Vocabulary):
+    image_with_texts = _create_image_from_texts(vocabulary.text_a, vocabulary.text_b)
     img_byte_arr = io.BytesIO()
     image_with_texts.save(img_byte_arr, format="PNG")
 
