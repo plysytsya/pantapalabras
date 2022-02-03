@@ -2,10 +2,11 @@ import io
 from typing import Dict, List
 
 import uvicorn
-from fastapi import Body, FastAPI
+from fastapi import FastAPI
 from starlette.responses import StreamingResponse
 
 from pantapalabras.config import settings
+from pantapalabras.schemas.vocabulary import Vocabulary
 from pantapalabras.spreadsheet import SPREADSHEET_CLIENT
 from pantapalabras.text_to_image import _create_image_from_texts
 
@@ -28,10 +29,8 @@ def get_spreadsheet() -> List[dict]:
 
 
 @app.post("/image", response_class=StreamingResponse)
-def create_image_from_texts(request=Body(...)):  # noqa
-    print(request)
-    print(type(request))
-    image_with_texts = _create_image_from_texts("hello", "world")
+def create_image_from_texts(vocabulary: Vocabulary):
+    image_with_texts = _create_image_from_texts(vocabulary.text_a, vocabulary.text_b)
     img_byte_arr = io.BytesIO()
     image_with_texts.save(img_byte_arr, format="PNG")
 
