@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = os.getenv("SECRET_KEY")
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
     SPREADSHEET: str = "Pantapalabras"
-    FONT: str = "Pacifico-Regular.ttf"
+    FONT: str = "Futura Bold font.ttf"
 
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", ENV_LOCAL)
     if ENVIRONMENT == ENV_LOCAL:
