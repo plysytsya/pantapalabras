@@ -1,15 +1,13 @@
 import io
-from pathlib import Path
 from typing import Dict, List
 
 import uvicorn
 from fastapi import FastAPI
-from PIL import Image, ImageDraw, ImageFont
 from starlette.responses import StreamingResponse
 
 from pantapalabras.config import settings
-from pantapalabras.constants import PROJECT_PARENT_DIR
 from pantapalabras.spreadsheet import SPREADSHEET_CLIENT
+from pantapalabras.text_to_image import create_image_from_texts
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -31,17 +29,10 @@ def get_spreadsheet() -> List[dict]:
 
 @app.get("/image", response_class=StreamingResponse)
 def get_image():
-    img = Image.new("RGB", (960, 540), color=(255, 255, 255))
 
-    d = ImageDraw.Draw(img)
-    font_path = str(Path(PROJECT_PARENT_DIR / "fonts/times.ttf"))
-    font = ImageFont.truetype(font_path, 150)
-    d.text((10, 10), "Hello World", font=font, fill=(0, 0, 0))
-    d.text((10, 250), "Hola Mundo", font=font, fill=(0, 0, 0))
-    img = img.transpose(Image.ROTATE_90)
-
+    image_with_texts = create_image_from_texts("hello, world!", "hola, mundo!")
     img_byte_arr = io.BytesIO()
-    img.save(img_byte_arr, format="PNG")
+    image_with_texts.save(img_byte_arr, format="PNG")
 
     img_byte_arr = img_byte_arr.getvalue()
     return StreamingResponse(io.BytesIO(img_byte_arr), media_type="image/png")
