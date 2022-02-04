@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     M5PAPER_SCREEN_SIZE: Tuple[int, int] = (960, 540)
     MAX_FONT_SIZE: int = 150
     SCREEN_BORDER: int = 60
+    VERTICAL_BORDER_BETWEEN_TEXTS: int = 60
 
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", ENV_LOCAL)
     if ENVIRONMENT == ENV_LOCAL:

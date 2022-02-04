@@ -3,23 +3,21 @@ from PIL import Image, ImageDraw
 
 from pantapalabras.config import settings
 from pantapalabras.constants import RGB_COLOR_PALLET
-from pantapalabras.controller.image_controller import (
-    _adjust_font_size,
-    _adjust_horizontal_position,
-    _measure_text_size,
-)
+from pantapalabras.controller.image_controller import _center_horizontally, _fit_text_to_screen, _measure_text_width
+
+EXAMPLE_TEXTS = [
+    "Hello, world!",
+    "pariatur. Excepteur sint",
+    "adipisci velit, sed quia non numquam",
+    "magni",
+    "voluptatem",
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod",
+]
 
 
 @pytest.mark.parametrize(
     "text",
-    [
-        "Hello, world!",
-        "pariatur. Excepteur sint",
-        "adipisci velit, sed quia non numquam",
-        "magni",
-        "voluptatem",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod",
-    ],
+    EXAMPLE_TEXTS,
 )
 def test_fit_text_to_screen(text: str):
     # Arrange
@@ -27,33 +25,25 @@ def test_fit_text_to_screen(text: str):
     drawing = ImageDraw.Draw(image)
 
     # Act
-    font, _, _ = _adjust_font_size(drawing, text)
+    font, _ = _fit_text_to_screen(drawing, text)
 
     # Assert
-    width, height = _measure_text_size(drawing, text, font)
+    width = _measure_text_width(drawing, text, font)
     assert width <= settings.M5PAPER_SCREEN_SIZE[0] - settings.SCREEN_BORDER
-    assert height <= settings.M5PAPER_SCREEN_SIZE[1] - settings.SCREEN_BORDER
 
 
 @pytest.mark.parametrize(
     "text",
-    [
-        "Hello, world!",
-        "pariatur. Excepteur sint",
-        "adipisci velit, sed quia non numquam",
-        "magni",
-        "voluptatem",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod",
-    ],
+    EXAMPLE_TEXTS,
 )
-def test_centralize_text(text: str):
+def test_center_horizontally(text: str):
     # Arrange
     image = Image.new("RGB", settings.M5PAPER_SCREEN_SIZE, color=RGB_COLOR_PALLET["white"])
     drawing = ImageDraw.Draw(image)
-    font, text_width, text_height = _adjust_font_size(drawing, text)
+    font, text_width = _fit_text_to_screen(drawing, text)
 
     # Act
-    horizontal_position = _adjust_horizontal_position(text_width)
+    horizontal_position = _center_horizontally(text_width)
 
     # Assert
     assert isinstance(horizontal_position, int)
