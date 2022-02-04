@@ -21,7 +21,7 @@ def _create_image_from_texts(text_a: str, text_b: str) -> Image:
 
     drawing.text((horizontal_position_a, 10), text_a, font=font, fill=RGB_COLOR_PALLET["black"])
     drawing.text((horizontal_position_b, 250), text_b, font=font, fill=RGB_COLOR_PALLET["black"])
-    return image  # .transpose(Image.ROTATE_270)
+    return image.transpose(Image.ROTATE_270)
 
 
 def _adjust_font_size(drawing: ImageDraw.ImageDraw, text: str) -> Tuple[FreeTypeFont, int, int]:
