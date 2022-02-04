@@ -6,9 +6,9 @@ from fastapi import FastAPI
 from starlette.responses import StreamingResponse
 
 from pantapalabras.config import settings
+from pantapalabras.controller.image_controller import _create_image_from_texts
+from pantapalabras.controller.spreadsheet_controller import SPREADSHEET_CLIENT
 from pantapalabras.schemas.vocabulary import Vocabulary
-from pantapalabras.spreadsheet import SPREADSHEET_CLIENT
-from pantapalabras.text_to_image import _create_image_from_texts
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
