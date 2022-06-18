@@ -6,28 +6,34 @@ from PIL.ImageFont import FreeTypeFont
 from pantapalabras.config import settings
 from pantapalabras.constants import FONTS_DIR
 from pantapalabras.controller.color_switch import BlackWhiteSwitch
+from pantapalabras.schemas.vocabulary import User, Vocabulary
 
-BLACK_WHITE_SWITCH = BlackWhiteSwitch()
 
-
-def _create_image_from_texts(text_a: str, text_b: str) -> Image:
+def _create_image_from_texts(vocabulary: Vocabulary, user: User) -> Image:
     """Create an image from a vocabulary word-pair.
 
     The images are adjusted to fit the screen-size of an M5Paper device (960x540).
     """
-    image = Image.new("RGB", settings.M5PAPER_SCREEN_SIZE, color=BLACK_WHITE_SWITCH.color_a)
-    drawing = _draw_middle_line(image)
+    image = Image.new("RGB", settings.M5PAPER_SCREEN_SIZE, color=BlackWhiteSwitch(user).color_a)
+    drawing = _draw_middle_line(image, user)
 
-    font, width_a, width_b = _adjust_font_size(drawing, text_a, text_b)
+    font, width_a, width_b = _adjust_font_size(drawing, vocabulary.text_a, vocabulary.text_b)
 
     horizontal_position_a = _center_horizontally(width_a)
     horizontal_position_b = _center_horizontally(width_b)
     vertical_position_a, vertical_position_b = _center_vertically()
 
     drawing.text(
-        (horizontal_position_a, vertical_position_a), text_a, font=font, fill=BLACK_WHITE_SWITCH.color_b, anchor="ld"
+        (horizontal_position_a, vertical_position_a),
+        vocabulary.text_a,
+        font=font,
+        fill=BlackWhiteSwitch(user).color_b,
+        anchor="ld",
     )
-    drawing.text((horizontal_position_b, vertical_position_b), text_b, font=font, fill=BLACK_WHITE_SWITCH.color_b)
+    drawing.text(
+        (horizontal_position_b, vertical_position_b), vocabulary.text_b, font=font, fill=BlackWhiteSwitch(user).color_b
+    )
+    BlackWhiteSwitch(user).switch()
     return image.transpose(Image.ROTATE_270)
 
 
@@ -49,11 +55,11 @@ def _adjust_font_size(drawing, text_a, text_b) -> Tuple[FreeTypeFont, int, int]:
     return font, width_a, width_b
 
 
-def _draw_middle_line(image: Image) -> ImageDraw.ImageDraw:
+def _draw_middle_line(image: Image, user: User) -> ImageDraw.ImageDraw:
     drawing = ImageDraw.Draw(image)
     horizontal_center = int(round(settings.M5PAPER_SCREEN_SIZE[1] / 2, 0))
     drawing.line(
-        (0, horizontal_center, settings.M5PAPER_SCREEN_SIZE[0], horizontal_center), fill=BLACK_WHITE_SWITCH.color_b
+        (0, horizontal_center, settings.M5PAPER_SCREEN_SIZE[0], horizontal_center), fill=BlackWhiteSwitch(user).color_b
     )
     return drawing
 
