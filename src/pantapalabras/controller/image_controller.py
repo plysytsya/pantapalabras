@@ -4,7 +4,10 @@ from PIL import Image, ImageDraw, ImageFont
 from PIL.ImageFont import FreeTypeFont
 
 from pantapalabras.config import settings
-from pantapalabras.constants import FONTS_DIR, RGB_COLOR_PALLET
+from pantapalabras.constants import FONTS_DIR
+from pantapalabras.controller.color_switch import BlackWhiteSwitch
+
+BLACK_WHITE_SWITCH = BlackWhiteSwitch()
 
 
 def _create_image_from_texts(text_a: str, text_b: str) -> Image:
@@ -12,7 +15,7 @@ def _create_image_from_texts(text_a: str, text_b: str) -> Image:
 
     The images are adjusted to fit the screen-size of an M5Paper device (960x540).
     """
-    image = Image.new("RGB", settings.M5PAPER_SCREEN_SIZE, color=RGB_COLOR_PALLET["white"])
+    image = Image.new("RGB", settings.M5PAPER_SCREEN_SIZE, color=BLACK_WHITE_SWITCH.color_a)
     drawing = _draw_middle_line(image)
 
     font, width_a, width_b = _adjust_font_size(drawing, text_a, text_b)
@@ -22,9 +25,9 @@ def _create_image_from_texts(text_a: str, text_b: str) -> Image:
     vertical_position_a, vertical_position_b = _center_vertically()
 
     drawing.text(
-        (horizontal_position_a, vertical_position_a), text_a, font=font, fill=RGB_COLOR_PALLET["black"], anchor="ld"
+        (horizontal_position_a, vertical_position_a), text_a, font=font, fill=BLACK_WHITE_SWITCH.color_b, anchor="ld"
     )
-    drawing.text((horizontal_position_b, vertical_position_b), text_b, font=font, fill=RGB_COLOR_PALLET["black"])
+    drawing.text((horizontal_position_b, vertical_position_b), text_b, font=font, fill=BLACK_WHITE_SWITCH.color_b)
     return image.transpose(Image.ROTATE_270)
 
 
@@ -49,7 +52,9 @@ def _adjust_font_size(drawing, text_a, text_b) -> Tuple[FreeTypeFont, int, int]:
 def _draw_middle_line(image: Image) -> ImageDraw.ImageDraw:
     drawing = ImageDraw.Draw(image)
     horizontal_center = int(round(settings.M5PAPER_SCREEN_SIZE[1] / 2, 0))
-    drawing.line((0, horizontal_center, settings.M5PAPER_SCREEN_SIZE[0], horizontal_center), fill=0)
+    drawing.line(
+        (0, horizontal_center, settings.M5PAPER_SCREEN_SIZE[0], horizontal_center), fill=BLACK_WHITE_SWITCH.color_b
+    )
     return drawing
 
 
