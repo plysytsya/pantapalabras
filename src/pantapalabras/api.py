@@ -31,9 +31,9 @@ def get_spreadsheet() -> List[dict]:
 
 @app.put("/vocabulary")
 async def get_body(request: Request):
-    req = await request.json()
-    print(req)
-    return await request.json()
+    req = await request.body()
+    print(req.decode("utf-8"))
+    return {"hello": "world"}
 
 
 @app.put("/vocabulary2")
