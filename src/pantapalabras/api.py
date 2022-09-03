@@ -2,7 +2,7 @@ import io
 from typing import Dict, List
 
 import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from starlette.responses import StreamingResponse
 
 from pantapalabras.config import settings
@@ -30,6 +30,13 @@ def get_spreadsheet() -> List[dict]:
 
 
 @app.put("/vocabulary")
+async def get_body(request: Request):
+    req = await request.json()
+    print(req)
+    return await request.json()
+
+
+@app.put("/vocabulary2")
 def put_vocabulary(vocabulary: Vocabulary):
     SPREADSHEET_CONTROLLER.add_vocabulary_pair(vocabulary.text_a, vocabulary.text_b)
 
