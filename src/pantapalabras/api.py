@@ -7,7 +7,7 @@ from starlette.responses import StreamingResponse
 
 from pantapalabras.config import settings
 from pantapalabras.controller.image_controller import _create_image_from_texts
-from pantapalabras.controller.spreadsheet_controller import SPREADSHEET_CLIENT
+from pantapalabras.controller.spreadsheet_controller import SpreadsheetController
 from pantapalabras.schemas.vocabulary import User, Vocabulary
 
 app = FastAPI(
@@ -15,6 +15,8 @@ app = FastAPI(
     docs_url=f"/{settings.PROJECT_NAME}/docs",
     openapi_url=f"/{settings.PROJECT_NAME}/openapi.json",
 )
+
+SPREADSHEET_CONTROLLER = SpreadsheetController()
 
 
 @app.get("/", response_model=Dict)
@@ -24,8 +26,12 @@ def health_check() -> Dict:
 
 @app.get("/spreadsheet")
 def get_spreadsheet() -> List[dict]:
-    sheet = SPREADSHEET_CLIENT.open(settings.SPREADSHEET).sheet1
-    return sheet.get_all_records()
+    return SPREADSHEET_CONTROLLER.get_whole_spreadsheet()
+
+
+@app.put("/vocabulary")
+def put_vocabulary(vocabulary: Vocabulary):
+    SPREADSHEET_CONTROLLER.add_vocabulary_pair(vocabulary.text_a, vocabulary.text_b)
 
 
 @app.post("/image", response_class=StreamingResponse)
